@@ -11,7 +11,9 @@ static const QStringList URLS({
 	{"http://localhost:8000/BigBuckBunny_640x360.m4v"},
 
 	// Fails randomly on WinRT. Sometimes succeeds but file is incomplete or corrupted
-	// This seems to be relative to my network configuration
+	// This seems to be relative to the network configuration of the place I work at
+	// because this works much better when trying from home.
+	// This always work when using mingw or msvc (not UWP).
 	{"https://test.path4flight.com/tiles/openmaptiles/openmaptiles.mbtiles"},
 
 	// Always succeeds
