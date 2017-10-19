@@ -7,8 +7,14 @@
 #include "downloadmanager.h"
 
 static const QStringList URLS({
+	// Always fail on WinRT
 	{"http://localhost:8000/big_buck_bunny_480p_stereo.ogg"},
+
+	// Fails randomly on WinRT. Sometimes succeeds but file is incomplete or corrupted
+	// This seems to be relative to my network configuration
 	{"https://test.path4flight.com/tiles/openmaptiles/openmaptiles.mbtiles"},
+
+	// Always succeeds
 	{"https://farm8.staticflickr.com/7321/11218357214_9fe189a4ec_o_d.jpg"},
 	{"https://download.blender.org/peach/bigbuckbunny_movies/BigBuckBunny_640x360.m4v"},
 	{"https://farm5.staticflickr.com/4140/4878877825_edd5f3bec5_o_d.jpg"},
