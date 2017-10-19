@@ -17,8 +17,9 @@ class Download : public QObject
 	Q_OBJECT
 public:
 	const QUrl url;
+	const qint64 expectedSize;
 
-	explicit Download(const QUrl &sourceUrl, QIODevicePtr &&output);
+	explicit Download(const QUrl &sourceUrl, qint64 expectedSize, QIODevicePtr &&output);
 	void start(QNetworkAccessManager &);
 	void cancel();
 

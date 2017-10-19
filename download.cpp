@@ -1,9 +1,10 @@
 #include "./download.h"
 
 
-Download::Download(const QUrl &url, QIODevicePtr &&output)
+Download::Download(const QUrl &url, qint64 expectedSize, QIODevicePtr &&output)
 	: QObject(nullptr)
 	, url(url)
+	, expectedSize(expectedSize)
 	, mOutput(std::move(output))
 	, mReply(nullptr)
 	, mCancelled(false)

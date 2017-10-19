@@ -10,13 +10,23 @@
 
 class Download;
 
+struct DownloadRequest
+{
+	QUrl url;
+	qint64 size;
+
+	DownloadRequest(const QString &, qint64);
+};
+
+typedef QList<DownloadRequest> DownloadRequests;
+
 class DownloadManager : public QObject
 {
 	Q_OBJECT
 	Q_PROPERTY(bool isParallel READ isParallel WRITE setIsParallel NOTIFY isParallelChanged)
 	Q_PROPERTY(int remainingDownloads READ remainingDownloads NOTIFY remainingDownloadsChanged)
 public:
-	explicit DownloadManager(const QStringList &urls, const QString &outDirPath);
+	explicit DownloadManager(const DownloadRequests &, const QString &outDirPath);
 
 	Q_INVOKABLE void start();
 
@@ -45,6 +55,7 @@ private slots:
 	void onDownloadProgress(Download *download, double);
 
 private:
+	const QString mOutDirPath;
 	QNetworkAccessManager mNetworkAccessManager;
 	QQueue<Download*> mWaitingDownloads;
 	QSet<Download*> mPendingDownloads;
@@ -52,6 +63,7 @@ private:
 	QByteArray mBuffer;
 
 	void startDownload(Download *);
+	QString urlToPath(const QUrl &);
 };
 
 #endif // DOWNLOADMANAGER_H

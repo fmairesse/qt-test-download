@@ -1,5 +1,6 @@
 #include <QDir>
 #include <QFile>
+#include <QFileInfo>
 #include <QDebug>
 #include <QBuffer>
 #include <QNetworkConfiguration>
@@ -8,19 +9,24 @@
 #include "download.h"
 
 
-DownloadManager::DownloadManager(const QStringList &urls, const QString &outDirPath)
+DownloadRequest::DownloadRequest(const QString &url, qint64 size)
+	: url(QUrl::fromUserInput(url))
+	, size(size)
+{
+}
+
+
+DownloadManager::DownloadManager(const DownloadRequests &requests, const QString &outDirPath)
 	: QObject(nullptr)
+	, mOutDirPath(outDirPath)
 	, mIsParallel(false)
 {
-	QDir outDir(outDirPath);
-	for (const QString &urlAsString : urls) {
-		QUrl url(QUrl::fromUserInput(urlAsString));
-		QString fileName = QFileInfo(url.path()).fileName();
-		QFile *outFile = new QFile(outDir.absoluteFilePath(fileName));
+	for (const DownloadRequest &request : requests) {
+		QFile *outFile = new QFile(this->urlToPath(request.url));
 		if (outFile->exists()) {
 			outFile->remove();
 		}
-		Download *download = new Download(url, QIODevicePtr(outFile));
+		Download *download = new Download(request.url, request.size, QIODevicePtr(outFile));
 //		Download *download = new Download(url, QIODevicePtr(new QBuffer(&mBuffer)));
 
 		connect(download, SIGNAL(error(Download*,QString)), this, SLOT(onDownloadError(Download*,QString)));
@@ -32,6 +38,12 @@ DownloadManager::DownloadManager(const QStringList &urls, const QString &outDirP
 	}
 
 	qDebug() << "Timeout="<< mNetworkAccessManager.configuration().connectTimeout();
+}
+
+QString DownloadManager::urlToPath(const QUrl &url)
+{
+	QDir outDir(mOutDirPath);
+	return outDir.absoluteFilePath(QUrl::toPercentEncoding(url.path()));
 }
 
 void DownloadManager::start()
@@ -81,7 +93,14 @@ void DownloadManager::onDownloadError(Download *download, const QString &reason)
 void DownloadManager::onDownloadDone(Download *download)
 {
 	qDebug() << "Download done: " << download->url.toString();
-	emit downloaded(download->url.toString());
+	QFileInfo downloadedFileInfo(this->urlToPath(download->url));
+	const qint64 realSize = downloadedFileInfo.size();
+	if (realSize == download->expectedSize) {
+		emit downloaded(download->url.toString());
+	} else {
+		emit error(download->url.toString(),
+			QString("Wrong size: expected %1, got %2").arg(download->expectedSize).arg(realSize));
+	}
 }
 
 void DownloadManager::onDownloadProgress(Download *download, double progress)
