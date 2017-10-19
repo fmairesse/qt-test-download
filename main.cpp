@@ -17,10 +17,7 @@ static const DownloadRequests REQUESTS({
 	// and serve it with python SimpleHTTPServer
 	{"http://localhost:8000/foo.txt", 3},
 
-	// Fails randomly on WinRT. Sometimes succeeds but file is incomplete or corrupted
-	// This seems to be relative to the network configuration of the place I work at
-	// because this works much better when trying from home.
-	// This always work when using mingw or msvc (not UWP).
+	// Fails randomly on WinRT. Sometimes succeeds but file is incomplete or corrupted.
 	{"https://test.path4flight.com/tiles/openmaptiles/openmaptiles.mbtiles", 143708160},
 
 	// Always succeeds
