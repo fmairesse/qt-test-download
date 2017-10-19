@@ -8,7 +8,7 @@
 
 static const QStringList URLS({
 	// Always fail on WinRT
-	{"http://localhost:8000/big_buck_bunny_480p_stereo.ogg"},
+	{"http://localhost:8000/BigBuckBunny_640x360.m4v"},
 
 	// Fails randomly on WinRT. Sometimes succeeds but file is incomplete or corrupted
 	// This seems to be relative to my network configuration
