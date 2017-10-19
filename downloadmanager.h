@@ -6,6 +6,7 @@
 #include <QQueue>
 #include <QSet>
 #include <QNetworkAccessManager>
+#include <QByteArray>
 
 class Download;
 
@@ -41,12 +42,14 @@ private slots:
 	void onDownloadError(Download *download, const QString &reason);
 	void onDownloadDone(Download *download);
 	void onDownloadFinished(Download *download);
+	void onDownloadProgress(Download *download, double);
 
 private:
 	QNetworkAccessManager mNetworkAccessManager;
 	QQueue<Download*> mWaitingDownloads;
 	QSet<Download*> mPendingDownloads;
 	bool mIsParallel;
+	QByteArray mBuffer;
 
 	void startDownload(Download *);
 };

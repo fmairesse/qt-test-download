@@ -27,6 +27,7 @@ void Download::start(QNetworkAccessManager& networkManager)
 	connect(mReply, SIGNAL(readyRead()), this, SLOT(onReadyRead()));
 	connect(mReply, SIGNAL(downloadProgress(qint64,qint64)), this, SLOT(onProgress(qint64,qint64)));
 	connect(mReply, SIGNAL(finished()), this, SLOT(onFinished()));
+	connect(mReply, SIGNAL(sslErrors(QList<QSslError>)), this, SLOT(onSslErrors(QList<QSslError>)));
 }
 
 void Download::cancel()
@@ -47,6 +48,13 @@ void Download::onError(QNetworkReply::NetworkError error)
 		mErrorReason = QString("Network error %1: %2").arg(QString::number(error)).arg(mReply->errorString());
 	}
 	onFinished();
+}
+
+void Download::onSslErrors(const QList<QSslError> &errors)
+{
+	for (const auto &error : errors) {
+		qWarning() << "SSL error: " << error;
+	}
 }
 
 void Download::onReadyRead()

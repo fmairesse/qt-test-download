@@ -7,6 +7,7 @@
 #include <QUrl>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
+#include <QSslError>
 
 
 typedef std::unique_ptr<QIODevice> QIODevicePtr;
@@ -34,6 +35,7 @@ private slots:
 	void onReadyRead();
 	void onProgress(qint64 bytesReceived, qint64 bytesTotal);
 	void onFinished();
+	void onSslErrors(const QList<QSslError> &);
 
 private:
 	QIODevicePtr mOutput;
